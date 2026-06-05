@@ -24,4 +24,25 @@ class IncomeRepository {
             record.date.year == month.year && record.date.month == month.month)
         .fold(0, (sum, record) => sum + record.amount);
   }
+
+    Map<String, List<IncomeRecord>> groupIncomeByMonth() {
+        final records = getAllIncome()
+            ..sort((a, b) => b.date.compareTo(a.date));
+
+        final Map<String, List<IncomeRecord>> grouped = {};
+
+        for (final record in records) {
+            final key =
+                '${record.date.year}-${record.date.month.toString().padLeft(2, '0')}';
+
+            grouped.putIfAbsent(key, () => []);
+            grouped[key]!.add(record);
+        }
+
+        return grouped;
+    }
+
+    double getTotalForRecords(List<IncomeRecord> records) {
+        return records.fold(0, (sum, record) => sum + record.amount);
+    }
 }

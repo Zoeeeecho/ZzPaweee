@@ -1,21 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
+import '../../models/income_record.dart';
 import '../../repositories/income_repository.dart';
 import '../../services/hive_service.dart';
-import '../../widgets/income_record_tile.dart';
-import '../../widgets/income_summary_card.dart';
+import '../../widgets/monthly_income_section.dart';
 import 'add_income_page.dart';
 import 'income_detail_page.dart';
+
 class IncomePage extends StatelessWidget {
   const IncomePage({super.key});
+
+  String formatMonthTitle(String monthKey) {
+    final parts = monthKey.split('-');
+    final year = int.parse(parts[0]);
+    final month = int.parse(parts[1]);
+    final date = DateTime(year, month);
+
+    return DateFormat('MMMM yyyy').format(date);
+  }
+
+  void openIncomeDetail(BuildContext context, IncomeRecord record) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => IncomeDetailPage(record: record),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final repository = IncomeRepository();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Income'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Income'),
+        centerTitle: true,
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -29,44 +52,43 @@ class IncomePage extends StatelessWidget {
       body: ValueListenableBuilder(
         valueListenable: HiveService.incomeBox.listenable(),
         builder: (context, box, _) {
-          final records = repository.getAllIncome().reversed.toList();
-          final monthTotal = repository.getMonthlyTotal(DateTime.now());
+          final groupedIncome = repository.groupIncomeByMonth();
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: IncomeSummaryCard(
-                  total: monthTotal,
-                  month: DateTime.now(),
-                ),
-              ),
-              Expanded(
-                child: records.isEmpty
-                    ? const Center(child: Text('No income records yet.'))
-                    : ListView.builder(
-                        itemCount: records.length,
-                        itemBuilder: (context, index) {
-                          final record = records[index];
+          if (groupedIncome.isEmpty) {
+            return const Center(
+              child: Text('No income records yet.'),
+            );
+          }
 
-                          return IncomeRecordTile(
-                            record: record,
-                            onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => IncomeDetailPage(record: record),
-                                    ),
-                                );
-                            },
-                            onDelete: () {
-                              repository.deleteIncome(record.id);
-                            },
-                          );
-                        },
-                      ),
-              ),
-            ],
+          final monthKeys = groupedIncome.keys.toList();
+
+          return ListView.builder(
+            padding: const EdgeInsets.only(bottom: 90),
+            itemCount: monthKeys.length,
+            itemBuilder: (context, index) {
+              final monthKey = monthKeys[index];
+              final records = groupedIncome[monthKey]!;
+              final total = repository.getTotalForRecords(records);
+
+              return MonthlyIncomeSection(
+                monthTitle: formatMonthTitle(monthKey),
+                total: total,
+                records: records,
+                onRecordTap: (record) {
+                  openIncomeDetail(context, record);
+                },
+                onDelete: (record) {
+                  repository.deleteIncome(record.id);
+                },
+                onExportPdf: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('PDF export coming next 🐾'),
+                    ),
+                  );
+                },
+              );
+            },
           );
         },
       ),
