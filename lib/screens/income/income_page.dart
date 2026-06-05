@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-
+import '../../services/income_pdf_service.dart';
 import '../../models/income_record.dart';
 import '../../repositories/income_repository.dart';
 import '../../services/hive_service.dart';
@@ -33,7 +33,7 @@ class IncomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repository = IncomeRepository();
-
+    final pdfService = IncomePdfService();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Income'),
@@ -80,12 +80,12 @@ class IncomePage extends StatelessWidget {
                 onDelete: (record) {
                   repository.deleteIncome(record.id);
                 },
-                onExportPdf: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('PDF export coming next 🐾'),
-                    ),
-                  );
+                onExportPdf: () async {
+                    await pdfService.exportMonthlyIncomePdf(
+                        monthTitle: formatMonthTitle(monthKey),
+                        total: total,
+                        records: records,
+                    );
                 },
               );
             },
