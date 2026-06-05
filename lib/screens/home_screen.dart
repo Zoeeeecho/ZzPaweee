@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'dashboard_page.dart';
 import 'income/income_page.dart';
+import 'pets/pets_page.dart';
+import 'owners/owners_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final pages = const [
     DashboardPage(),
     IncomePage(),
+    PetsPage(),
+    OwnersPage(),
   ];
 
   @override
@@ -37,6 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(
             icon: Icon(Icons.payments),
             label: 'Income',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.pets),
+            label: 'Pets',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person),
+            label: 'Owners',
           ),
         ],
       ),
