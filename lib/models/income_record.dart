@@ -5,6 +5,8 @@ class IncomeRecord {
   final String dogName;
   final String notes;
   final DateTime date;
+  final String startTime;
+  final String endTime;
 
   IncomeRecord({
     required this.id,
@@ -13,6 +15,8 @@ class IncomeRecord {
     required this.dogName,
     required this.notes,
     required this.date,
+    required this.startTime,
+    required this.endTime,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +27,8 @@ class IncomeRecord {
       'dogName': dogName,
       'notes': notes,
       'date': date.toIso8601String(),
+      'startTime': startTime,
+      'endTime': endTime,
     };
   }
 
@@ -34,6 +40,8 @@ class IncomeRecord {
       dogName: map['dogName'] ?? '',
       notes: map['notes'] ?? '',
       date: DateTime.parse(map['date']),
+      startTime: map['startTime'] ?? '',
+      endTime: map['endTime'] ?? '',
     );
   }
 }

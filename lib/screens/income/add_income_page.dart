@@ -22,6 +22,15 @@ class _AddIncomePageState extends State<AddIncomePage> {
   String serviceType = 'Dog Walk';
   DateTime selectedDate = DateTime.now();
 
+  TimeOfDay startTime = const TimeOfDay(hour: 8, minute: 0);
+  TimeOfDay endTime = const TimeOfDay(hour: 21, minute: 0);
+
+  String formatTime(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
   @override
   void dispose() {
     amountController.dispose();
@@ -47,10 +56,38 @@ class _AddIncomePageState extends State<AddIncomePage> {
       dogName: dogNameController.text.trim(),
       notes: notesController.text.trim(),
       date: selectedDate,
+      startTime: formatTime(startTime),
+      endTime: formatTime(endTime),
     );
 
     repository.addIncome(record);
     Navigator.pop(context);
+  }
+
+  Future<void> pickStartTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: startTime,
+    );
+
+    if (picked != null) {
+      setState(() {
+        startTime = picked;
+      });
+    }
+  }
+
+  Future<void> pickEndTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: endTime,
+    );
+
+    if (picked != null) {
+      setState(() {
+        endTime = picked;
+      });
+    }
   }
 
   @override
@@ -122,6 +159,28 @@ class _AddIncomePageState extends State<AddIncomePage> {
                 });
               }
             },
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            title: const Text('Start Time'),
+            subtitle: Text(formatTime(startTime)),
+            trailing: const Icon(Icons.access_time),
+            onTap: pickStartTime,
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            title: const Text('End Time'),
+            subtitle: Text(formatTime(endTime)),
+            trailing: const Icon(Icons.access_time),
+            onTap: pickEndTime,
           ),
           const SizedBox(height: 16),
           TextField(

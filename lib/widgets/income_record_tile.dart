@@ -17,6 +17,10 @@ class IncomeRecordTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final serviceTime = record.startTime.isEmpty && record.endTime.isEmpty
+        ? 'No time selected'
+        : '${record.startTime}–${record.endTime}';
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ListTile(
@@ -25,7 +29,7 @@ class IncomeRecordTile extends StatelessWidget {
         title: Text('${record.amount.toStringAsFixed(0)} SEK'),
         subtitle: Text(
           '${record.serviceType} · ${record.dogName}\n'
-          '${DateFormat('yyyy-MM-dd').format(record.date)}',
+          '${DateFormat('yyyy-MM-dd').format(record.date)} · $serviceTime',
         ),
         isThreeLine: true,
         trailing: IconButton(
