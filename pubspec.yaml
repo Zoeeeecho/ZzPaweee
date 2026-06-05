@@ -39,6 +39,7 @@ dependencies:
   image_picker: ^1.2.1
   intl: ^0.20.2
   uuid: ^4.5.3
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -94,3 +95,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  ios: true
+  android: true
+  image_path: "assets/app_icon.png"
+  remove_alpha_ios: true
