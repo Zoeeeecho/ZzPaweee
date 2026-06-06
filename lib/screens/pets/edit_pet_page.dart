@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:path_provider/path_provider.dart';
 import '../../models/owner.dart';
 import '../../models/pet.dart';
 import '../../repositories/owner_repository.dart';
