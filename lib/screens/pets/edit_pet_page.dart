@@ -95,11 +95,15 @@ class _EditPetPageState extends State<EditPetPage> {
   Future<void> pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    if (picked != null) {
-      setState(() {
-        photoPath = picked.path;
-      });
-    }
+    if (picked == null) return;
+
+    final appDir = await getApplicationDocumentsDirectory();
+    final fileName = 'pet_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final savedImage = await File(picked.path).copy('${appDir.path}/$fileName');
+
+    setState(() {
+      photoPath = savedImage.path;
+    });
   }
 
   void saveChanges() {
